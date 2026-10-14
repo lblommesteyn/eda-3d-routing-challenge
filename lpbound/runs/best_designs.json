@@ -1,0 +1,20 @@
+{
+ "ctrl": {
+  "instance": "benchmarks_designs/ctrl.json",
+  "baseline": 73148,
+  "best": 48930,
+  "best_file": "submissions/designs\\coordinated_refinement\\ctrl.sol.json"
+ },
+ "int2float": {
+  "instance": "benchmarks_designs/int2float.json",
+  "baseline": 152284,
+  "best": 88064,
+  "best_file": "submissions/designs\\coordinated_refinement\\int2float.sol.json"
+ },
+ "router": {
+  "instance": "benchmarks_designs/router.json",
+  "baseline": 82491,
+  "best": 67503,
+  "best_file": "submissions/designs\\coordinated_refinement\\router.sol.json"
+ }
+}

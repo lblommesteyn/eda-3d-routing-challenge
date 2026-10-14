@@ -1,0 +1,12 @@
+{
+ "case": "lpbound/calib/small/s8n7_2.json",
+ "lp": 454.8,
+ "lp_s": 0.4707756042480469,
+ "negotiated": 534,
+ "mip": 467.99999999999994,
+ "mip_bound": 467.99999999999994,
+ "status": "Optimal",
+ "mip_s": 133.45075750350952,
+ "opt_over_lp": 1.0290237467018468,
+ "neg_over_opt": 1.1410256410256412
+}

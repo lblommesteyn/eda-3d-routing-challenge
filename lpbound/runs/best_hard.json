@@ -1,0 +1,56 @@
+{
+ "case_01": {
+  "instance": "benchmarks_hard/case_01.json",
+  "baseline": 11938,
+  "best": 8540,
+  "best_file": "submissions/hard\\cuda-have-been-shorter\\case_01.sol.json"
+ },
+ "case_02": {
+  "instance": "benchmarks_hard/case_02.json",
+  "baseline": 18910,
+  "best": 12794,
+  "best_file": "submissions/hard\\cuda-have-been-shorter\\case_02.sol.json"
+ },
+ "case_03": {
+  "instance": "benchmarks_hard/case_03.json",
+  "baseline": 14724,
+  "best": 10922,
+  "best_file": "submissions/hard\\cuda-have-been-shorter\\case_03.sol.json"
+ },
+ "case_04": {
+  "instance": "benchmarks_hard/case_04.json",
+  "baseline": 18077,
+  "best": 12861,
+  "best_file": "submissions/hard\\coordinated_refinement\\case_04.sol.json"
+ },
+ "case_05": {
+  "instance": "benchmarks_hard/case_05.json",
+  "baseline": 21051,
+  "best": 14987,
+  "best_file": "submissions/hard\\coordinated_refinement\\case_05.sol.json"
+ },
+ "case_06": {
+  "instance": "benchmarks_hard/case_06.json",
+  "baseline": 27134,
+  "best": 19322,
+  "best_file": "submissions/hard\\coordinated_refinement\\case_06.sol.json"
+ },
+ "case_07": {
+  "instance": "benchmarks_hard/case_07.json",
+  "baseline": 31341,
+  "best": 20887,
+  "best_file": "submissions/hard\\coordinated_refinement\\case_07.sol.json"
+ },
+ "case_08": {
+  "instance": "benchmarks_hard/case_08.json",
+  "baseline": 30886,
+  "best": 20932,
+  "best_file": "submissions/hard\\coordinated_refinement\\case_08.sol.json"
+ },
+ "case_09": {
+  "instance": "benchmarks_hard/case_09.json",
+  "baseline": 27802,
+  "best": 21062,
+  "best_file": "submissions/hard\\coordinated_refinement\\case_09.sol.json"
+ }
+}

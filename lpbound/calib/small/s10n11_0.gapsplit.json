@@ -1,0 +1,15 @@
+{
+ "case": "lpbound/calib/small/s10n11_0.json",
+ "n_multi": 5,
+ "n_two": 6,
+ "multi_only": {
+  "value": 708.640976236352,
+  "status": "Time limit reached",
+  "incumbent": 731.3333333333334
+ },
+ "twopin_only": {
+  "value": 708.1109381755297,
+  "status": "Time limit reached",
+  "incumbent": 738.5
+ }
+}

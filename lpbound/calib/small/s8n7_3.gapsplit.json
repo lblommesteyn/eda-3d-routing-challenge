@@ -1,0 +1,15 @@
+{
+ "case": "lpbound/calib/small/s8n7_3.json",
+ "n_multi": 3,
+ "n_two": 4,
+ "multi_only": {
+  "value": 288.99999999999955,
+  "status": "Optimal",
+  "incumbent": 288.99999999999955
+ },
+ "twopin_only": {
+  "value": 287.0,
+  "status": "Optimal",
+  "incumbent": 287.0
+ }
+}

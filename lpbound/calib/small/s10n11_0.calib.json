@@ -1,0 +1,12 @@
+{
+ "case": "lpbound/calib/small\\s10n11_0.json",
+ "lp": 707.5626242544744,
+ "lp_s": 4.751971244812012,
+ "negotiated": 856,
+ "mip": 733.9999999999999,
+ "mip_bound": 709.855614973262,
+ "status": "Time limit reached",
+ "mip_s": 2400.3869502544403,
+ "opt_over_lp": 1.0373640082718916,
+ "neg_over_opt": 1.1662125340599456
+}

@@ -1,0 +1,26 @@
+{
+ "case_01": {
+  "instance": "benchmarks_congested/case_01.json",
+  "baseline": 71049,
+  "best": 52233,
+  "best_file": "submissions/congested\\coordinated_refinement\\case_01.sol.json"
+ },
+ "case_02": {
+  "instance": "benchmarks_congested/case_02.json",
+  "baseline": 122534,
+  "best": 92856,
+  "best_file": "submissions/congested\\coordinated_refinement\\case_02.sol.json"
+ },
+ "case_03": {
+  "instance": "benchmarks_congested/case_03.json",
+  "baseline": 216835,
+  "best": 159095,
+  "best_file": "submissions/congested\\coordinated_refinement\\case_03.sol.json"
+ },
+ "case_04": {
+  "instance": "benchmarks_congested/case_04.json",
+  "baseline": 234127,
+  "best": 172047,
+  "best_file": "submissions/congested\\coordinated_refinement\\case_04.sol.json"
+ }
+}

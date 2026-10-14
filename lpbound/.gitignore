@@ -1,0 +1,10 @@
+__pycache__/
+*.log
+runs/hard/
+runs/hard2/
+runs/wintest/
+runs/big_old/
+runs/big2/killed/
+# superseded by runs/big2/
+runs/big/congested_case_03.alpha.npz
+runs/big/congested_case_04.alpha.npz
