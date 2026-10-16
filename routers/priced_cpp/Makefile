@@ -1,4 +1,7 @@
-CXX = clang++
+# clang++ when installed, else g++; `make CXX=...` still overrides
+ifeq ($(origin CXX),default)
+CXX := $(shell command -v clang++ >/dev/null 2>&1 && echo clang++ || echo g++)
+endif
 CXXFLAGS = -O3 -std=c++17 -Wall -Wextra -Wpedantic
 
 .PHONY: all test

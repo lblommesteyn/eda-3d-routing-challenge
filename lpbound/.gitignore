@@ -8,3 +8,7 @@ runs/big2/killed/
 # superseded by runs/big2/
 runs/big/congested_case_03.alpha.npz
 runs/big/congested_case_04.alpha.npz
+pool/
+start/
+win/
+layers/

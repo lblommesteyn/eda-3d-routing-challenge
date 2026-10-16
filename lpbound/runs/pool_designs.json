@@ -1,0 +1,86 @@
+{
+ "ctrl": {
+  "instance": "benchmarks_designs/ctrl.json",
+  "baseline": 73148,
+  "best": 48652,
+  "best_file": "lpbound/pool/pr35/submissions/designs/warm_lns_refinement/ctrl.sol.json",
+  "top": [
+   [
+    48652,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    48654,
+    "pr51/coordinated_refinement"
+   ],
+   [
+    48656,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    48670,
+    "pr46/leonid-popryho"
+   ],
+   [
+    48898,
+    "pr36/coordinated_refinement"
+   ]
+  ]
+ },
+ "int2float": {
+  "instance": "benchmarks_designs/int2float.json",
+  "baseline": 152284,
+  "best": 87334,
+  "best_file": "lpbound/pool/pr35/submissions/designs/warm_lns_refinement/int2float.sol.json",
+  "top": [
+   [
+    87334,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    87334,
+    "pr54/coordinated_refinement"
+   ],
+   [
+    87352,
+    "pr51/coordinated_refinement"
+   ],
+   [
+    87370,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    87472,
+    "pr46/leonid-popryho"
+   ]
+  ]
+ },
+ "router": {
+  "instance": "benchmarks_designs/router.json",
+  "baseline": 82491,
+  "best": 66937,
+  "best_file": "lpbound/pool/pr35/submissions/designs/warm_lns_refinement/router.sol.json",
+  "top": [
+   [
+    66937,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    66937,
+    "pr51/coordinated_refinement"
+   ],
+   [
+    66945,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    66953,
+    "pr46/leonid-popryho"
+   ],
+   [
+    67467,
+    "pr36/coordinated_refinement"
+   ]
+  ]
+ }
+}

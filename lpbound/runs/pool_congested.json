@@ -1,0 +1,114 @@
+{
+ "case_01": {
+  "instance": "benchmarks_congested/case_01.json",
+  "baseline": 71049,
+  "best": 52219,
+  "best_file": "lpbound/pool/pr35/submissions/congested/warm_lns_refinement/case_01.sol.json",
+  "top": [
+   [
+    52219,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    52219,
+    "pr51/coordinated_refinement"
+   ],
+   [
+    52229,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    52233,
+    "main/coordinated_refinement"
+   ],
+   [
+    52235,
+    "main/leonid-popryho"
+   ]
+  ]
+ },
+ "case_02": {
+  "instance": "benchmarks_congested/case_02.json",
+  "baseline": 122534,
+  "best": 92376,
+  "best_file": "lpbound/pool/pr35/submissions/congested/warm_lns_refinement/case_02.sol.json",
+  "top": [
+   [
+    92376,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    92376,
+    "pr51/coordinated_refinement"
+   ],
+   [
+    92384,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    92402,
+    "pr46/leonid-popryho"
+   ],
+   [
+    92840,
+    "pr36/coordinated_refinement"
+   ]
+  ]
+ },
+ "case_03": {
+  "instance": "benchmarks_congested/case_03.json",
+  "baseline": 216835,
+  "best": 157629,
+  "best_file": "lpbound/pool/pr35/submissions/congested/warm_lns_refinement/case_03.sol.json",
+  "top": [
+   [
+    157629,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    157629,
+    "pr51/coordinated_refinement"
+   ],
+   [
+    157635,
+    "pr46/leonid-popryho"
+   ],
+   [
+    157635,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    159017,
+    "pr36/coordinated_refinement"
+   ]
+  ]
+ },
+ "case_04": {
+  "instance": "benchmarks_congested/case_04.json",
+  "baseline": 234127,
+  "best": 170353,
+  "best_file": "lpbound/pool/pr35/submissions/congested/warm_lns_refinement/case_04.sol.json",
+  "top": [
+   [
+    170353,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    170353,
+    "pr51/coordinated_refinement"
+   ],
+   [
+    170367,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    170377,
+    "pr46/leonid-popryho"
+   ],
+   [
+    171967,
+    "pr36/coordinated_refinement"
+   ]
+  ]
+ }
+}

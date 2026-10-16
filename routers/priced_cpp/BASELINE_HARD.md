@@ -27,4 +27,4 @@ PYTHONPATH=. python3 routers/priced_cpp/pipeline.py --suite benchmarks_hard \
 
 Pricing defaults: present 64, history 4, growth 1, maximum 1000 iterations. The old exponential schedule stalled with unresolved conflicts. Negotiation now accepts replacement oracle routes rather than requiring each surrogate tree search to lower the old tree objective; legal refinement still requires actual improvement.
 
-The output folder contains all nine routes, detailed phase traces in `report.json`, per-case timing in `runtime.json`, and independently recomputed `verified_score.json`. Time-limited runs can produce different delays on different machines. All 49 existing tests pass. This is one full-suite run, not a multi-seed robustness study.
+The output folder contains all nine routes, detailed phase traces in `report.json`, per-case timing in `runtime.json`, and independently recomputed `verified_score.json`. Time-limited runs can produce different delays on different machines. All 50 tests pass (13 skip without HiGHS). This is one full-suite run, not a multi-seed robustness study.

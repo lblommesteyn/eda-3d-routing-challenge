@@ -1,0 +1,254 @@
+{
+ "case_01": {
+  "instance": "benchmarks_hard/case_01.json",
+  "baseline": 11938,
+  "best": 8540,
+  "best_file": "lpbound/pool/main/submissions/hard/cuda-have-been-shorter/case_01.sol.json",
+  "top": [
+   [
+    8540,
+    "main/cuda-have-been-shorter"
+   ],
+   [
+    8540,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    8540,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    8540,
+    "pr50/naga-arjun-refinement"
+   ],
+   [
+    8542,
+    "main/coordinated_refinement"
+   ]
+  ]
+ },
+ "case_02": {
+  "instance": "benchmarks_hard/case_02.json",
+  "baseline": 18910,
+  "best": 12794,
+  "best_file": "lpbound/pool/main/submissions/hard/cuda-have-been-shorter/case_02.sol.json",
+  "top": [
+   [
+    12794,
+    "main/cuda-have-been-shorter"
+   ],
+   [
+    12794,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    12794,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    12794,
+    "pr50/naga-arjun-refinement"
+   ],
+   [
+    12798,
+    "pr46/leonid-popryho"
+   ]
+  ]
+ },
+ "case_03": {
+  "instance": "benchmarks_hard/case_03.json",
+  "baseline": 14724,
+  "best": 10922,
+  "best_file": "lpbound/pool/main/submissions/hard/cuda-have-been-shorter/case_03.sol.json",
+  "top": [
+   [
+    10922,
+    "main/cuda-have-been-shorter"
+   ],
+   [
+    10922,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    10922,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    10922,
+    "pr50/naga-arjun-refinement"
+   ],
+   [
+    10924,
+    "main/coordinated_refinement"
+   ]
+  ]
+ },
+ "case_04": {
+  "instance": "benchmarks_hard/case_04.json",
+  "baseline": 18077,
+  "best": 12817,
+  "best_file": "lpbound/pool/pr35/submissions/hard/warm_lns_refinement/case_04.sol.json",
+  "top": [
+   [
+    12817,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    12819,
+    "pr46/leonid-popryho"
+   ],
+   [
+    12819,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    12861,
+    "main/coordinated_refinement"
+   ],
+   [
+    12863,
+    "main/leonid-popryho"
+   ]
+  ]
+ },
+ "case_05": {
+  "instance": "benchmarks_hard/case_05.json",
+  "baseline": 21051,
+  "best": 14963,
+  "best_file": "lpbound/pool/pr35/submissions/hard/warm_lns_refinement/case_05.sol.json",
+  "top": [
+   [
+    14963,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    14963,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    14985,
+    "pr36/coordinated_refinement"
+   ],
+   [
+    14987,
+    "main/coordinated_refinement"
+   ],
+   [
+    14987,
+    "main/leonid-popryho"
+   ]
+  ]
+ },
+ "case_06": {
+  "instance": "benchmarks_hard/case_06.json",
+  "baseline": 27134,
+  "best": 19304,
+  "best_file": "lpbound/pool/pr35/submissions/hard/warm_lns_refinement/case_06.sol.json",
+  "top": [
+   [
+    19304,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    19304,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    19320,
+    "pr36/coordinated_refinement"
+   ],
+   [
+    19322,
+    "main/coordinated_refinement"
+   ],
+   [
+    19322,
+    "main/leonid-popryho"
+   ]
+  ]
+ },
+ "case_07": {
+  "instance": "benchmarks_hard/case_07.json",
+  "baseline": 31341,
+  "best": 20775,
+  "best_file": "lpbound/pool/pr35/submissions/hard/warm_lns_refinement/case_07.sol.json",
+  "top": [
+   [
+    20775,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    20775,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    20887,
+    "main/coordinated_refinement"
+   ],
+   [
+    20889,
+    "main/leonid-popryho"
+   ],
+   [
+    21051,
+    "main/cuda-have-been-shorter"
+   ]
+  ]
+ },
+ "case_08": {
+  "instance": "benchmarks_hard/case_08.json",
+  "baseline": 30886,
+  "best": 20932,
+  "best_file": "lpbound/pool/main/submissions/hard/coordinated_refinement/case_08.sol.json",
+  "top": [
+   [
+    20932,
+    "main/coordinated_refinement"
+   ],
+   [
+    20932,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    20932,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    20932,
+    "pr50/naga-arjun-refinement"
+   ],
+   [
+    20934,
+    "main/leonid-popryho"
+   ]
+  ]
+ },
+ "case_09": {
+  "instance": "benchmarks_hard/case_09.json",
+  "baseline": 27802,
+  "best": 21046,
+  "best_file": "lpbound/pool/pr35/submissions/hard/warm_lns_refinement/case_09.sol.json",
+  "top": [
+   [
+    21046,
+    "pr35/warm_lns_refinement"
+   ],
+   [
+    21046,
+    "pr47/coordinated_refinement"
+   ],
+   [
+    21058,
+    "pr36/coordinated_refinement"
+   ],
+   [
+    21062,
+    "main/coordinated_refinement"
+   ],
+   [
+    21072,
+    "main/leonid-popryho"
+   ]
+  ]
+ }
+}

@@ -53,7 +53,12 @@ above remains the control; loading duals does not guarantee a score improvement.
 
 Hard case 01 smoke check with these settings: **10060 delay, legal, 49.06 s**;
 the unseeded control was **9760**. Both routing and native reports recorded the
-actual NPZ hash. This confirms integration, not a quality gain. All **50 tests**
+actual NPZ hash. This confirms integration, not a quality gain. A rerun with the
+same settings and `--seed 0` on another machine (WSL, g++) gave the reverse:
+**9870** seeded, **10008** unseeded, both legal under `m3d/checker.py`. The
+stages are time-limited, so the seed does not make runs repeat and single runs
+differ by about 300 on this case; comparing seeded and unseeded needs several
+runs per arm. All **50 tests**
 pass, including a fixture where a dual-priced vertex changes the initial route
 and subsequent physical-delay polish removes the unnecessary detour.
 
