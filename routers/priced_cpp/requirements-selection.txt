@@ -1,0 +1,4 @@
+# Optional joint candidate selection; the C++ router/controller need neither.
+scipy==1.18.1
+numpy==2.5.4
+highspy==1.15.1
