@@ -207,7 +207,7 @@ Gains over the pool best are small, and most windows prove optimal:
 | congested case_02 | 92376 | 92374 |
 | designs int2float | 87334 | 87316 |
 
-Everything else is unchanged. The result is `submissions/*/lpbound_window_lns`
+Everything else is unchanged. On 2026-10-18 congested case_04 took 170349 from jay-tau's upstream PR #58. The result is `submissions/*/lpbound_window_lns`
 (hard 1.4157, congested 1.3591, designs 1.4784). It is a derivative entry that
 credits coordinated_refinement, cuda-have-been-shorter and
 warm_lns_refinement. The public routes are at a strong local optimum, and the

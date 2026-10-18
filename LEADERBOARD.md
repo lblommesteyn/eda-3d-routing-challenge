@@ -96,7 +96,7 @@ do not edit it by hand.
 
 | rank | submission | author | aggregate | legal | total delay | runtime (s) | Pareto | verified |
 |---:|---|---|---:|:---:|---:|---:|:---:|:---:|
-| 1 | lpbound_window_lns † | lblommesteyn | 1.3591 | 4/4 | 472573 | 37463.00 | ✓ | — |
+| 1 | lpbound_window_lns † | lblommesteyn | 1.3591 | 4/4 | 472569 | 37463.00 | ✓ | — |
 | 2 | coordinated_refinement † | jay-tau | 1.3508 | 4/4 | 476231 | missing |  | — |
 | 3 | leonid-popryho | Leonid Popryho | 1.3505 | 4/4 | 476333 | missing |  | — |
 | 4 | cuda-have-been-shorter | YJ Kim | 1.3392 | 4/4 | 479359 | missing |  | — |
@@ -108,7 +108,7 @@ do not edit it by hand.
 | 10 | shivaahir158 | Shiva Ahir (PhD Candidate, Stony Brook University) | 1.0549 | 4/4 | 608243 | 8756.73 |  | — |
 | 11 | synapse-surge | Sameer-Deepak | 1.0518 | 4/4 | 616017 | missing |  | — |
 
-† derivative entry (refines another entry's routes): lpbound_window_lns builds on warm_lns_refinement (kesudh); coordinated_refinement builds on leonid-popryho (Leonid Popryho); warm_lns_refinement builds on pathfinder_lns (Taz33m).
+† derivative entry (refines another entry's routes): lpbound_window_lns builds on coordinated_refinement; warm_lns_refinement (jay-tau; kesudh); coordinated_refinement builds on leonid-popryho (Leonid Popryho); warm_lns_refinement builds on pathfinder_lns (Taz33m).
 
 ## designs  (3 cases)
 
