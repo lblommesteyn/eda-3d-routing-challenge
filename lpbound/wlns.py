@@ -117,7 +117,7 @@ def sp_tree(inst, k, allowed, drv, ss):
     return adj, int(sum(dist[t] for t in ss))
 
 
-def window(st, box, mip_seconds=30.0, threads=4, max_nets=40, max_sinks=120, log=None):
+def window(st, box, mip_seconds=30.0, threads=4, max_nets=40, max_sinks=120, log=None, margin=None, max_nodes=20000, verbose=False):
     """Re-route all nets touching box exactly. Returns the gain (>= 0)."""
     I = st.inst
     x0, x1, y0, y1 = box
@@ -146,6 +146,12 @@ def window(st, box, mip_seconds=30.0, threads=4, max_nets=40, max_sinks=120, log
     doms = {}
     for k in R:
         dom = freeB.copy()
+        if margin is not None:              # keep net k near its pins and current tree
+            vs = np.fromiter(st.verts[k], np.int64)
+            xs, ys = vs % I.W, (vs % WH) // I.W
+            bx = np.zeros((I.H, I.W), bool)
+            bx[max(0, ys.min() - margin):ys.max() + margin + 1, max(0, xs.min() - margin):xs.max() + margin + 1] = True
+            dom &= np.tile(bx.ravel(), I.L)
         dom[np.fromiter(st.verts[k], np.int64)] = True
         _, drv, ss = I.nets[k]
         dom[drv] = True
@@ -218,11 +224,11 @@ def window(st, box, mip_seconds=30.0, threads=4, max_nets=40, max_sinks=120, log
     integ[list(ycol.values())] = True
     lp.integrality_ = [highspy.HighsVarType.kInteger if x else highspy.HighsVarType.kContinuous for x in integ]
     h = highspy.Highs()
-    h.setOptionValue('output_flag', False)
+    h.setOptionValue('output_flag', bool(verbose))
     h.setOptionValue('time_limit', float(mip_seconds))
     h.setOptionValue('mip_rel_gap', 0.0)
     h.setOptionValue('threads', threads)
-    h.setOptionValue('mip_max_nodes', 20000)
+    h.setOptionValue('mip_max_nodes', max_nodes)
     h.passModel(lp)
     # warm start from incumbent tree paths
     x = np.zeros(ncol)
@@ -319,18 +325,18 @@ def slacks(st, alpha_path):
     netk = np.array([k for k, _ in sinks], np.int64)
     drv = np.array([I.nets[k][1] for k, _ in sinks], np.int64)
     tgt = np.array([I.nets[k][2][j] for k, j in sinks], np.int64)
-    sp, _, _ = price(I.W, I.H, I.L, np.array(I.ld, float), float(I.vd), I.pin_owner.astype(np.int64),
+    sp, pbuf, plen = price(I.W, I.H, I.L, np.array(I.ld, float), float(I.vd), I.pin_owner.astype(np.int64),
                      drv, tgt, netk, off, vert, val, 4, 8192)
     out = []
     for i, (k, j) in enumerate(sinks):
         p = tree_path(st, k, drv[i], tgt[i])
         al = dict(zip(vert[off[i]:off[i + 1]].tolist(), val[off[i]:off[i + 1]].tolist()))
         pc = I.path_cost(p) + sum(al.get(v, 0.0) for v in p[1:])
-        out.append((max(0.0, pc - sp[i]), p))
+        out.append((max(0.0, pc - sp[i]), p + pbuf[i, :plen[i]].tolist()))   # incumbent + priced SP path
     return out
 
 
-def run(case, start, out, seconds, box=8, mip_seconds=30, seed=0, threads=1, alpha=None, log=print):
+def run(case, start, out, seconds, box=8, mip_seconds=30, seed=0, threads=1, alpha=None, target=False, nmax=40, log=print):
     t0 = time.time()
     I = Instance(case)
     st = State(I, start)
@@ -345,7 +351,16 @@ def run(case, start, out, seconds, box=8, mip_seconds=30, seed=0, threads=1, alp
         it += 1
         bw = rng.randint(3, box + 2)
         bh = rng.randint(3, box + 2)
-        if sl and rng.random() < 0.8:
+        margin = None
+        if sl and target:
+            w = [x * x + 1e-6 for x, _ in sl]
+            _, p = rng.choices(sl, weights=w)[0]
+            xs = [v % I.W for v in p]; ys = [(v % (I.W * I.H)) // I.W for v in p]
+            pad = rng.randint(0, 2)
+            x0, y0 = max(0, min(xs) - pad), max(0, min(ys) - pad)
+            bw, bh = min(I.W, max(xs) + pad + 1) - x0, min(I.H, max(ys) + pad + 1) - y0
+            margin = 2
+        elif sl and rng.random() < 0.8:
             w = [x + 1e-3 for x, _ in sl]
             _, p = rng.choices(sl, weights=w)[0]
             v = rng.choice(p)
@@ -354,9 +369,9 @@ def run(case, start, out, seconds, box=8, mip_seconds=30, seed=0, threads=1, alp
         else:
             x0 = rng.randint(0, max(0, I.W - bw)); y0 = rng.randint(0, max(0, I.H - bh))
         bx = (x0, min(I.W, x0 + bw), y0, min(I.H, y0 + bh))
-        g, why = window(st, bx, mip_seconds, threads)
+        g, why = window(st, bx, mip_seconds, threads, max_nets=nmax, max_sinks=3 * nmax, margin=margin)
         if why == 'tl' and rng.random() < 0.3:
-            g, why = window(st, bx, 4 * mip_seconds, threads)
+            g, why = window(st, bx, 4 * mip_seconds, threads, max_nets=nmax, max_sinks=3 * nmax, margin=margin)
             why = why + '-retry'
         stats[why] = stats.get(why, 0) + 1
         if g > 0:
@@ -374,4 +389,5 @@ def run(case, start, out, seconds, box=8, mip_seconds=30, seed=0, threads=1, alp
 if __name__ == '__main__':
     a = sys.argv
     run(a[1], a[2], a[3], float(a[4]), int(a[5]) if len(a) > 5 else 8, float(a[6]) if len(a) > 6 else 30,
-        int(a[7]) if len(a) > 7 else 0, alpha=a[8] if len(a) > 8 and a[8] != '-' else None)
+        int(a[7]) if len(a) > 7 else 0, alpha=a[8] if len(a) > 8 and a[8] != '-' else None,
+        target=len(a) > 9 and a[9] == 'target', nmax=int(a[10]) if len(a) > 10 else 40)

@@ -1,0 +1,123 @@
+{
+ "author": "lblommesteyn",
+ "url": "https://github.com/lblommesteyn/eda-3d-routing-challenge/tree/lpbound",
+ "method": "Best public route per case, refined by exact joint re-routing (HiGHS MILP) of every net touching a window, with windows aimed by Lagrangian dual path slack.",
+ "date": "2026-10-16",
+ "hardware": "AMD Ryzen 7 5800X (8 cores / 16 threads), 48 GB RAM, Windows 11; one case per worker, up to 16 workers at once",
+ "threads": 1,
+ "runtime_note": "Wall time of the refinement runs only; excludes the compute behind the public routes.",
+ "derived_from": {
+  "submission": "coordinated_refinement; cuda-have-been-shorter; warm_lns_refinement",
+  "author": "YJ Kim; jay-tau; kesudh"
+ },
+ "cases": [
+  {
+   "case": "case_01",
+   "total_delay": 8540,
+   "best_public": 8540,
+   "method": "retained public route",
+   "start": {
+    "submission": "cuda-have-been-shorter",
+    "author": "YJ Kim",
+    "route": "submissions/hard/cuda-have-been-shorter/case_01.sol.json",
+    "source": "main"
+   }
+  },
+  {
+   "case": "case_02",
+   "total_delay": 12794,
+   "best_public": 12794,
+   "method": "retained public route",
+   "start": {
+    "submission": "cuda-have-been-shorter",
+    "author": "YJ Kim",
+    "route": "submissions/hard/cuda-have-been-shorter/case_02.sol.json",
+    "source": "main"
+   }
+  },
+  {
+   "case": "case_03",
+   "total_delay": 10922,
+   "best_public": 10922,
+   "method": "retained public route",
+   "start": {
+    "submission": "cuda-have-been-shorter",
+    "author": "YJ Kim",
+    "route": "submissions/hard/cuda-have-been-shorter/case_03.sol.json",
+    "source": "main"
+   }
+  },
+  {
+   "case": "case_04",
+   "total_delay": 12817,
+   "best_public": 12817,
+   "method": "retained public route",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/hard/warm_lns_refinement/case_04.sol.json",
+    "source": "pr35"
+   }
+  },
+  {
+   "case": "case_05",
+   "total_delay": 14961,
+   "best_public": 14963,
+   "method": "dual-guided exact window re-route (lpbound/wlns.py)",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/hard/warm_lns_refinement/case_05.sol.json",
+    "source": "pr35"
+   }
+  },
+  {
+   "case": "case_06",
+   "total_delay": 19304,
+   "best_public": 19304,
+   "method": "retained public route",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/hard/warm_lns_refinement/case_06.sol.json",
+    "source": "pr35"
+   }
+  },
+  {
+   "case": "case_07",
+   "total_delay": 20775,
+   "best_public": 20775,
+   "method": "retained public route",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/hard/warm_lns_refinement/case_07.sol.json",
+    "source": "pr35"
+   }
+  },
+  {
+   "case": "case_08",
+   "total_delay": 20932,
+   "best_public": 20932,
+   "method": "retained public route",
+   "start": {
+    "submission": "coordinated_refinement",
+    "author": "jay-tau",
+    "route": "submissions/hard/coordinated_refinement/case_08.sol.json",
+    "source": "main"
+   }
+  },
+  {
+   "case": "case_09",
+   "total_delay": 21046,
+   "best_public": 21046,
+   "method": "retained public route",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/hard/warm_lns_refinement/case_09.sol.json",
+    "source": "pr35"
+   }
+  }
+ ]
+}

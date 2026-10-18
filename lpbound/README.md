@@ -185,3 +185,31 @@ on vertices `vert[off[i]:off[i+1]]`, zero elsewhere. Sinks are in instance order
 Per-vertex congestion prices are `pi_v = max_n sum_{s in n} alpha[s,v]`. The old
 dense format (from `lagr.py`) holds `alpha` with shape `(n_sinks, W*H*L)`;
 those runs are not committed. Use `runs/hard3/`, `runs/big/` and `runs/big2/` for the current bounds.
+
+## Window LNS on the public pool (2026-10-16)
+
+`pool_best.py <tier>` scores every distinct route in `lpbound/pool/` (merged
+entries plus open upstream PRs, extracted locally; not committed) and keeps
+the best legal file per case. `wlns.py` then rips up every net touching a
+window and re-solves them jointly as an exact per-sink-flow MILP (HiGHS,
+warm-started from the incumbent), with windows aimed at sinks of large dual
+path slack. `gmip.py` is the same model over all nets, which is too large for
+the hard tier (case_01 never left the root LP in 40 min).
+`make_submission.py <tier> <name>` re-checks everything with `m3d/checker.py`
+and writes `submissions/<tier>/<name>/`.
+
+Gains over the pool best are small, and most windows prove optimal:
+
+| case | pool best | after wlns |
+|---|---:|---:|
+| hard case_05 | 14963 | 14961 |
+| congested case_01 | 52219 | 52217 |
+| congested case_02 | 92376 | 92374 |
+| designs int2float | 87334 | 87316 |
+
+Everything else is unchanged. The result is `submissions/*/lpbound_window_lns`
+(hard 1.4157, congested 1.3591, designs 1.4784). It is a derivative entry that
+credits coordinated_refinement, cuda-have-been-shorter and
+warm_lns_refinement. The public routes are at a strong local optimum, and the
+3 to 7% headroom left by the bounds needs larger restructuring than exact
+windows can reach.

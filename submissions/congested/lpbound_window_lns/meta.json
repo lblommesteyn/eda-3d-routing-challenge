@@ -1,0 +1,63 @@
+{
+ "author": "lblommesteyn",
+ "url": "https://github.com/lblommesteyn/eda-3d-routing-challenge/tree/lpbound",
+ "method": "Best public route per case, refined by exact joint re-routing (HiGHS MILP) of every net touching a window, with windows aimed by Lagrangian dual path slack.",
+ "date": "2026-10-16",
+ "hardware": "AMD Ryzen 7 5800X (8 cores / 16 threads), 48 GB RAM, Windows 11; one case per worker, up to 16 workers at once",
+ "threads": 1,
+ "runtime_note": "Wall time of the refinement runs only; excludes the compute behind the public routes.",
+ "derived_from": {
+  "submission": "warm_lns_refinement",
+  "author": "kesudh"
+ },
+ "cases": [
+  {
+   "case": "case_01",
+   "total_delay": 52217,
+   "best_public": 52219,
+   "method": "dual-guided exact window re-route (lpbound/wlns.py)",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/congested/warm_lns_refinement/case_01.sol.json",
+    "source": "pr35"
+   }
+  },
+  {
+   "case": "case_02",
+   "total_delay": 92374,
+   "best_public": 92376,
+   "method": "dual-guided exact window re-route (lpbound/wlns.py)",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/congested/warm_lns_refinement/case_02.sol.json",
+    "source": "pr35"
+   }
+  },
+  {
+   "case": "case_03",
+   "total_delay": 157629,
+   "best_public": 157629,
+   "method": "retained public route",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/congested/warm_lns_refinement/case_03.sol.json",
+    "source": "pr35"
+   }
+  },
+  {
+   "case": "case_04",
+   "total_delay": 170353,
+   "best_public": 170353,
+   "method": "retained public route",
+   "start": {
+    "submission": "warm_lns_refinement",
+    "author": "kesudh",
+    "route": "submissions/congested/warm_lns_refinement/case_04.sol.json",
+    "source": "pr35"
+   }
+  }
+ ]
+}
