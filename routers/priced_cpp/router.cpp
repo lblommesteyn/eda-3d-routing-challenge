@@ -23,6 +23,9 @@ struct Candidate {
 
 struct Grid {
     int w, h, layers, via;
+    // Shortest-path-tree searches stay within the pins' bounding box grown by this
+    // many cells (negative = whole grid), falling back to the whole grid if that fails.
+    int margin = -1;
     std::vector<int> layer_delay, pin_owner;
     mutable std::map<std::vector<int>, std::vector<long long>> heuristics;
     int size() const { return w * h * layers; }
@@ -71,19 +74,60 @@ std::uint64_t tie_rank(int vertex, std::uint64_t seed) {
 
 // Zero-price SPT is exact for sum of driver-to-sink delays with fixed obstacles.
 // Unioning predecessor paths preserves a tree; unused branches are discarded.
-bool build_spt(const Grid& g, int nid, const std::vector<int>& pins,
-               const std::vector<double>& prices, const std::vector<char>& blocked,
-               const std::vector<int>& reuse, double diversity, std::uint64_t seed,
-               Candidate& result) {
+bool build_spt_within(const Grid& g, int nid, const std::vector<int>& pins,
+                      const std::vector<double>& prices, const std::vector<char>& blocked,
+                      const std::vector<int>& reuse, double diversity, std::uint64_t seed,
+                      Candidate& result, int margin) {
     int n = g.size(), driver = pins.front(), left = 0;
-    std::vector<char> remaining(n, false), used(n, false);
+    const int plane = g.w * g.h;
+    int x0 = 0, x1 = g.w - 1, y0 = 0, y1 = g.h - 1;
+    if (margin >= 0) {
+        x0 = g.w; x1 = -1; y0 = g.h; y1 = -1;
+        for (int pin : pins) {
+            int x = pin % g.w, y = (pin % plane) / g.w;
+            x0 = std::min(x0, x); x1 = std::max(x1, x); y0 = std::min(y0, y); y1 = std::max(y1, y);
+        }
+        x0 = std::max(0, x0 - margin); x1 = std::min(g.w - 1, x1 + margin);
+        y0 = std::max(0, y0 - margin); y1 = std::min(g.h - 1, y1 + margin);
+    }
+    // Search state lives in reusable buffers; a vertex's entries are valid only when
+    // its stamp equals this search's, so a search costs what it touches instead of
+    // clearing whole-grid arrays (80k vertices on the 116x116 tiers).
+    struct Buffers {
+        std::vector<unsigned> stamp;
+        std::vector<double> distance;
+        std::vector<long long> true_distance;
+        std::vector<int> parent;
+        std::vector<char> closed, remaining, used;
+        unsigned current = 0;
+    };
+    thread_local Buffers b;
+    if (static_cast<int>(b.stamp.size()) != n) {
+        b.stamp.assign(n, 0); b.distance.assign(n, 0); b.true_distance.assign(n, 0); b.parent.assign(n, -1);
+        b.closed.assign(n, false); b.remaining.assign(n, false); b.used.assign(n, false); b.current = 0;
+    }
+    if (++b.current == 0) { std::fill(b.stamp.begin(), b.stamp.end(), 0); b.current = 1; }
+    const unsigned now = b.current;
+    auto touch = [&](int v) {
+        if (b.stamp[v] != now) {
+            b.stamp[v] = now; b.distance[v] = std::numeric_limits<double>::infinity();
+            b.true_distance[v] = 0; b.parent[v] = -1; b.closed[v] = b.remaining[v] = b.used[v] = false;
+        }
+    };
     for (int pin : pins) {
         if (blocked[pin]) return false;
-        if (pin != driver && !remaining[pin]) { remaining[pin] = true; ++left; }
+        touch(pin);
+        if (pin != driver && !b.remaining[pin]) { b.remaining[pin] = true; ++left; }
     }
-    std::vector<double> distance(n, std::numeric_limits<double>::infinity());
-    std::vector<long long> true_distance(n, 0);
-    std::vector<int> parent(n, -1);
+    auto& distance = b.distance;
+    auto& true_distance = b.true_distance;
+    auto& parent = b.parent;
+    // Settled vertices are final. Without this, rounding in fractional prices can
+    // re-open a settled vertex and swap its parent after a sink's true delay was
+    // recorded, so the extracted tree and its reported delay disagree.
+    auto& closed = b.closed;
+    auto& remaining = b.remaining;
+    auto& used = b.used;
     const auto& heuristic = g.heuristic(nid, pins);
     using Item = std::tuple<double, double, std::uint64_t, int>;
     std::priority_queue<Item, std::vector<Item>, std::greater<Item>> heap;
@@ -95,9 +139,17 @@ bool build_spt(const Grid& g, int nid, const std::vector<int>& pins,
         int u = std::get<3>(item);
         double cost = distance[u];
         if (priority != cost + heuristic[u] || std::get<1>(item) != (seed ? 0 : -cost)) continue;
+        if (closed[u]) continue;
+        closed[u] = true;
         if (remaining[u]) { remaining[u] = false; --left; }
         g.neighbors(u, [&](int v, int edge_delay) {
             if (blocked[v] || (g.pin_owner[v] >= 0 && g.pin_owner[v] != nid)) return;
+            if (margin >= 0) {
+                int x = v % g.w, y = (v % plane) / g.w;
+                if (x < x0 || x > x1 || y < y0 || y > y1) return;
+            }
+            touch(v);
+            if (closed[v]) return;
             double next = cost + edge_delay + prices[v] + diversity * reuse[v];
             if (next < distance[v]) {
                 distance[v] = next;
@@ -111,20 +163,31 @@ bool build_spt(const Grid& g, int nid, const std::vector<int>& pins,
     }
     if (left) return false;
     used[driver] = true;
+    double price = prices[driver];
     for (std::size_t i = 1; i < pins.size(); ++i) {
         result.delay += true_distance[pins[i]];
         int v = pins[i];
         while (!used[v]) {
             used[v] = true;
+            price += prices[v];
             int u = parent[v];
             if (u < 0) throw std::runtime_error("broken shortest-path tree");
             result.edges.emplace_back(std::min(u, v), std::max(u, v));
             v = u;
         }
     }
-    for (int v = 0; v < n; ++v) if (used[v]) result.price += prices[v];
+    result.price += price;
     std::sort(result.edges.begin(), result.edges.end());
     return true;
+}
+
+bool build_spt(const Grid& g, int nid, const std::vector<int>& pins,
+               const std::vector<double>& prices, const std::vector<char>& blocked,
+               const std::vector<int>& reuse, double diversity, std::uint64_t seed,
+               Candidate& result) {
+    if (g.margin >= 0 && build_spt_within(g, nid, pins, prices, blocked, reuse, diversity, seed, result, g.margin))
+        return true;
+    return build_spt_within(g, nid, pins, prices, blocked, reuse, diversity, seed, result, -1);
 }
 
 // Root-distance-seeded tree growth favors short driver-to-sink paths.

@@ -17,7 +17,7 @@ BINARY = Path(__file__).resolve().parent/"build"/"optimizer"
 
 def optimize(inst, submission, *, iterations=10000, seconds=120, temperature=20,
              seed=0, max_group=24, accurate_prices=False, progress=None, warm=True,
-             binary=None, compact_growth=False, neighbor_polish=False, dual=None):
+             binary=None, compact_growth=False, neighbor_polish=False, dual=None, negotiate=None, cycle=None, margin=None, fanout_order=None, ideal=None, kick=None, scratch=None, exact_negotiation=False, graft=None, graft_delays=None, fanout_bias=None):
     if type(iterations) is not int or iterations < 1 or type(max_group) is not int or max_group < 2:
         raise ValueError("positive iteration count and group size >=2 required")
     if not math.isfinite(seconds) or seconds <= 0 or not math.isfinite(temperature) or temperature < 0:
@@ -29,14 +29,28 @@ def optimize(inst, submission, *, iterations=10000, seconds=120, temperature=20,
     start = time.perf_counter()
     executable = Path(binary) if binary is not None else BINARY
     binary_sha256 = hashlib.sha256(executable.read_bytes()).hexdigest()
-    checked = check(inst,submission)
-    if not checked.legal:
-        raise ValueError("native refinement requires a fully legal input")
+    if submission is None:
+        # from-scratch construction: empty routes, the binary negotiates every net
+        if scratch is None:
+            raise ValueError("a submission or scratch settings are required")
+        submission = Submission(inst.name,[NetRoute(n.id,[]) for n in inst.nets])
+        delays = {n.id:0 for n in inst.nets}
+        initial_delay = None
+    elif graft is not None:
+        # hybrid input: routes of the nets in `graft` come from another solution, so
+        # the whole may conflict; per-net delays are supplied by the caller
+        delays = dict(graft_delays)
+        initial_delay = None
+    else:
+        checked = check(inst,submission)
+        if not checked.legal:
+            raise ValueError("native refinement requires a fully legal input")
+        delays = {r.net:r.delay for r in checked.nets}
+        initial_delay = checked.total_delay
     grid = Grid(inst)
     pins = {p.id:grid.vid(p.vertex()) for p in inst.pins}
     owners = {pins[p]:n.id for n in inst.nets for p in n.pins()}
     initial_routes = {r.net:r for r in submission.routes}
-    delays = {r.net:r.delay for r in checked.nets}
     lines = [f"{inst.width} {inst.height} {inst.layers} {inst.via_delay}",
              " ".join(map(str,inst.layer_delay)),str(len(owners))]
     lines.extend(f"{v} {nid}" for v,nid in sorted(owners.items()))
@@ -47,7 +61,50 @@ def optimize(inst, submission, *, iterations=10000, seconds=120, temperature=20,
         if len(dual.capacity) != inst.width*inst.height*inst.layers or set(dual.bids) != {n.id for n in inst.nets}:
             raise ValueError("dual prices do not match instance grid/nets")
         mode |= 8
-    lines.append(f"{len(inst.nets)} {iterations} {seconds} {temperature} {seed} {max_group} {mode} {int(warm)}")
+    if negotiate is not None:
+        # (percent of moves, rounds, initial present, present growth, history step)
+        mode |= 16
+    if cycle is not None:
+        mode |= 32
+    if margin is not None:
+        mode |= 64
+    if fanout_order is not None:
+        mode |= 128
+    if ideal is not None:
+        mode |= 256
+    if kick is not None:
+        mode |= 512
+    if scratch is not None:
+        mode |= 1024
+    if exact_negotiation:
+        mode |= 2048
+    if graft is not None:
+        mode |= 4096
+    if fanout_bias is not None:
+        mode |= 8192
+    header = f"{len(inst.nets)} {iterations} {seconds} {temperature} {seed} {max_group} {mode} {int(warm)}"
+    if negotiate is not None:
+        pct, rounds, present, growth, history = negotiate
+        header += f" {int(pct)} {int(rounds)} {float(present)!r} {float(growth)!r} {float(history)!r}"
+    if cycle is not None:
+        header += f" {int(cycle)}"
+    if margin is not None:
+        header += f" {int(margin)}"
+    if fanout_order is not None:
+        header += f" {int(fanout_order)}"
+    if ideal is not None:
+        header += f" {int(ideal[0])} {int(ideal[1])}"
+    if kick is not None:
+        header += f" {int(kick[0])} {int(kick[1])} {float(kick[2])!r} {float(kick[3])!r}"
+    if scratch is not None:
+        rounds, present, growth, history = scratch
+        header += f" {int(rounds)} {float(present)!r} {float(growth)!r} {float(history)!r}"
+    if fanout_bias is not None:
+        header += f" {float(fanout_bias)!r}"
+    if graft is not None:
+        index = {n.id:i for i,n in enumerate(inst.nets)}
+        header += f" {len(graft)} " + " ".join(str(index[n]) for n in graft)
+    lines.append(header)
     if dual is not None:
         occupied = [v for v,cost in enumerate(dual.capacity) if cost > 0]
         lines.append(str(len(occupied)))
@@ -93,8 +150,9 @@ def optimize(inst, submission, *, iterations=10000, seconds=120, temperature=20,
                 decoded.append((grid.coord(a),grid.coord(b)))
             routes.append(NetRoute(nid,decoded))
         process.wait(timeout=10)
+        native_log = process.stderr.read().strip()
         if process.returncode:
-            raise RuntimeError(process.stderr.read())
+            raise RuntimeError(native_log)
     finally:
         if process.poll() is None:
             process.kill(); process.wait()
@@ -102,12 +160,19 @@ def optimize(inst, submission, *, iterations=10000, seconds=120, temperature=20,
     result = Submission(inst.name,routes)
     verified = check(inst,result)
     if not verified.legal or verified.total_delay != int(best):
-        raise RuntimeError("native result failed official legality/delay verification")
+        bad = [(n.net, n.reasons) for n in verified.nets if not n.legal][:5]
+        bad += [(n.net, f"native {reported.get(n.net)} checker {n.delay}") for n in verified.nets
+                if reported.get(n.net) != n.delay][:5]
+        dump = Path(f"native_failure_{inst.name}_{seed}.sol.json")
+        result.save(str(dump))
+        raise RuntimeError(f"native result failed official legality/delay verification: legal={verified.legal} "
+                           f"total={verified.total_delay} reported={best} reasons={list(verified.reasons)[:5]} "
+                           f"nets={bad} (saved {dump})")
     if any(reported.get(r.net) != r.delay for r in verified.nets):
         raise RuntimeError("native per-net delay mismatch")
-    if verified.total_delay > checked.total_delay:
+    if initial_delay is not None and verified.total_delay > initial_delay:
         raise RuntimeError("native optimizer lost its legal incumbent")
-    return result,dict(initial_delay=checked.total_delay,total_delay=verified.total_delay,
+    return result,dict(initial_delay=initial_delay,total_delay=verified.total_delay,native_log=native_log,
                       iterations=int(performed),accepted=int(accepted),improvements=int(improvements),
                       native_seconds=float(elapsed),seconds=time.perf_counter()-start,trace=trace,
                       binary=str(executable.resolve()),binary_sha256=binary_sha256,
@@ -132,6 +197,14 @@ def main():
     parser.add_argument("--warm",action=argparse.BooleanOptionalAction,default=True)
     parser.add_argument("--binary",type=Path,default=BINARY)
     parser.add_argument("--dual-dir",type=Path)
+    parser.add_argument("--negotiate",type=float,nargs=5,metavar=("PCT","ROUNDS","PRESENT","GROWTH","HISTORY"),
+                        help="share of moves that re-route the group with a short joint negotiation")
+    parser.add_argument("--cycle",type=int,help="moves per annealing cycle before restarting from the best (default 1000)")
+    parser.add_argument("--margin",type=int,help="confine searches to the pins' bounding box grown by this many cells")
+    parser.add_argument("--kick",type=float,nargs=4,metavar=("NETS","ROUNDS","PRESENT","GROWTH"),
+                        help="renegotiate a region of NETS nets at every cycle restart")
+    parser.add_argument("--ideal",type=int,nargs=2,metavar=("PCT","CAP"),help="percent of ideal-tree moves and their group cap")
+    parser.add_argument("--fanout-order",type=int,metavar="PCT",help="percent of repairs that re-plan the largest nets first")
     args = parser.parse_args()
     args.out_dir.mkdir(parents=True,exist_ok=True)
     manifest = json.loads((args.suite/"suite.json").read_text())
@@ -152,7 +225,7 @@ def main():
             temperature=args.temperature,seed=args.seed,max_group=args.max_group,
             accurate_prices=args.accurate_prices,progress=progress,warm=args.warm,
             binary=args.binary,compact_growth=args.compact_growth,
-            neighbor_polish=args.neighbor_polish,dual=dual)
+            neighbor_polish=args.neighbor_polish,dual=dual,negotiate=args.negotiate,cycle=args.cycle,margin=args.margin,fanout_order=args.fanout_order,ideal=args.ideal,kick=args.kick)
         result.save(str(args.out_dir/(inst.name+".sol.json")))
         metrics.update(case=inst.name,score=case["baseline_total"]/metrics["total_delay"])
         rows.append(metrics)
@@ -161,7 +234,7 @@ def main():
             aggregate_score=aggregate if len(rows)==manifest["n_cases"] else 0,
             config={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()},
             runtime_note="Refinement only; starting-solution generation excluded."),indent=2)+"\n")
-        print(f"FINISHED {inst.name}: {metrics['initial_delay']}->{metrics['total_delay']} "
+        print(f"FINISHED {inst.name}: {metrics['initial_delay']}->{metrics['total_delay']} {metrics['native_log']} "
               f"iterations={metrics['iterations']} seconds={metrics['seconds']:.2f}",flush=True)
     return 0
 

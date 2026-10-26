@@ -26,6 +26,8 @@ def main():
     parser.add_argument("--present", type=float, default=64)
     parser.add_argument("--history", type=float, default=4)
     parser.add_argument("--growth", type=float, default=1)
+    parser.add_argument("--fanout-scale", action="store_true",
+                        help="divide a net's congestion prices by its sink count, so high-fanout nets keep the fast layers")
     parser.add_argument("--max-iters", type=int, default=1000)
     parser.add_argument("--refinement-seconds", type=float, default=180)
     parser.add_argument("--rounds", type=int, default=20)
@@ -61,7 +63,7 @@ def main():
             negotiation_k=1, present=args.present, history=args.history,
             growth=args.growth, max_iters=args.max_iters,
             refinement_passes=0, time_limit=args.routing_seconds, seed=args.seed,
-            progress=routing_progress, dual=dual)
+            progress=routing_progress, dual=dual, fanout_scale=args.fanout_scale)
         refinement = None
         if sub is not None:
             def refinement_progress(row):
