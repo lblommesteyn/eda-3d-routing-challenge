@@ -69,7 +69,7 @@ Submit by pull request; see [CONTRIBUTING.md](CONTRIBUTING.md). Also in [LEADERB
 | 1 | coordinated_refinement † | jay-tau | 1.4136 | 9/9 | 142321 | missing |  | — |
 | 2 | leonid-popryho | Leonid Popryho | 1.4123 | 9/9 | 142413 | missing |  | — |
 | 3 | cuda-have-been-shorter | YJ Kim | 1.4085 | 9/9 | 142989 | missing |  | — |
-| 4 | priced_slow_anneal | Luke Blommesteyn (lblommesteyn) and Saksham Batra (sakshambatra1) | 1.4067 | 9/9 | 143007 | 154977.70 | ✓ | — |
+| 4 | priced_slow_anneal | Luke Blommesteyn (lblommesteyn) and Saksham Batra (sakshambatra1) | 1.4080 | 9/9 | 142893 | 161248.00 | ✓ | — |
 | 5 | spt_lns | James (IrwinJam) | 1.3971 | 9/9 | 144153 | missing |  | — |
 | 6 | pathfinder_lns | Tazeem Mahashin | 1.3884 | 9/9 | 144991 | missing |  | — |
 | 7 | warm_lns_refinement † | kesudh | 1.3874 | 9/9 | 145095 | missing |  | — |
